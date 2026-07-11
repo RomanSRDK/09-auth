@@ -1,0 +1,76 @@
+"use client";
+
+import SearchBox from "@/components/SearchBox/SearchBox";
+import NoteList from "@/components/NoteList/NoteList";
+import Pagination from "@/components/Pagination/Pagination";
+
+import { fetchNotes } from "@/lib/api";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { useDebounce } from "use-debounce";
+import css from "./NotesPage.module.css";
+
+import Loading from "@/app/loading";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+
+export default function NotesClient() {
+  const [currentPage, setcurrentPage] = useState(1);
+
+  const [searchText, setSearchText] = useState("");
+  const [debouncedSearch] = useDebounce(searchText, 800);
+
+  const { slug } = useParams<{ slug: string[] }>();
+
+  const tag = slug[0] === "All" ? undefined : slug[0];
+
+  const { isPending, data } = useQuery({
+    queryKey: ["notes", { page: currentPage, search: debouncedSearch, tag }],
+    queryFn: () =>
+      fetchNotes({ page: currentPage, search: debouncedSearch, tag }),
+    placeholderData: keepPreviousData,
+    refetchOnMount: false,
+  });
+
+  useEffect(() => {
+    if (data && data.notes.length === 0) {
+      toast.error("No notes found", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    }
+  }, [data]);
+
+  const handleSearchChange = (value: string) => {
+    setSearchText(value);
+    setcurrentPage(1);
+  };
+
+  return (
+    <main className={css.app}>
+      <div className={css.toolbar}>
+        <SearchBox inputValue={searchText} onChange={handleSearchChange} />
+
+        {data && data.totalPages > 1 && (
+          <Pagination
+            totalPages={data.totalPages}
+            page={currentPage}
+            onPageChange={setcurrentPage}
+          />
+        )}
+
+        <Link href="/notes/action/create" className={css.button}>
+          Create note +
+        </Link>
+      </div>
+
+      {isPending && <Loading />}
+      {data && data.notes.length > 0 && <NoteList allNotes={data.notes} />}
+      <Toaster />
+    </main>
+  );
+}
