@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getAllTags } from "@/lib/api";
+import { getAllTags } from "@/lib/constants/noteTags";
+
 import css from "./SidebarNotes.module.css";
 
 export default function SidebarNotes() {
