@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import type { Note } from "@/types/note";
+import type { User } from "@/types/user";
 import { api } from "./api";
 
 interface FetchNotesResponse {
@@ -14,19 +15,13 @@ interface FetchNotesParams {
   tag?: string;
 }
 
-const getCookieHeader = async (): Promise<string> => {
-  const cookieStore = await cookies();
-  return cookieStore.toString();
-};
-
+//Notes
 export const fetchNotes = async ({
   page,
   search = "",
   perPage = 12,
   tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
-  const cookieHeader = await getCookieHeader();
-
   const { data } = await api.get<FetchNotesResponse>("/notes", {
     params: {
       page,
@@ -35,7 +30,7 @@ export const fetchNotes = async ({
       tag,
     },
     headers: {
-      Cookie: cookieHeader,
+      Cookie: await getCookieHeader(),
     },
   });
 
@@ -43,13 +38,39 @@ export const fetchNotes = async ({
 };
 
 export const fetchNoteById = async (id: Note["id"]): Promise<Note> => {
-  const cookieHeader = await getCookieHeader();
-
   const { data } = await api.get<Note>(`/notes/${id}`, {
     headers: {
-      Cookie: cookieHeader,
+      Cookie: await getCookieHeader(),
     },
   });
 
   return data;
 };
+
+//Auth
+export const checkSession = async (): Promise<User | null> => {
+  const { data } = await api.get<User | null>("/auth/session", {
+    headers: {
+      Cookie: await getCookieHeader(),
+    },
+  });
+
+  return data || null;
+};
+
+//Users
+export const getMe = async (): Promise<User> => {
+  const { data } = await api.get<User>("/users/me", {
+    headers: {
+      Cookie: await getCookieHeader(),
+    },
+  });
+
+  return data;
+};
+
+//
+async function getCookieHeader(): Promise<string> {
+  const cookieStore = await cookies();
+  return cookieStore.toString();
+}

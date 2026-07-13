@@ -1,3 +1,4 @@
+import AuthNavigation from "../AuthNavigation/AuthNavigation";
 import Link from "next/link";
 
 import css from "./Header.module.css";
@@ -10,12 +11,13 @@ export default function Header() {
       </Link>
       <nav aria-label="Main Navigation">
         <ul className={css.navigation}>
-          <li className={css.navigationItem}>
+          {/* <li className={css.navigationItem}>
             <Link href="/">Home</Link>
           </li>
           <li>
             <Link href="/notes/filter/All">Notes</Link>
-          </li>
+          </li> */}
+          <AuthNavigation />
         </ul>
       </nav>
     </header>
