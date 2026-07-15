@@ -1,1 +1,1 @@
-export const getAllTags = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
+export const noteTags = ["Todo", "Work", "Personal", "Meeting", "Shopping"];

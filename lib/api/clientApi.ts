@@ -16,6 +16,10 @@ interface UpdateUserRequest {
   username: string;
 }
 
+interface CheckSessionResponse {
+  success: boolean;
+}
+
 type FetchNotesParams = {
   page: number;
   search?: string;
@@ -40,10 +44,10 @@ export const logout = async (): Promise<void> => {
   await api.post("/auth/logout");
 };
 
-export const checkSession = async (): Promise<User | null> => {
-  const { data } = await api.get<User | null>("/auth/session");
+export const checkSession = async (): Promise<boolean> => {
+  const { data } = await api.get<CheckSessionResponse>("/auth/session");
 
-  return data || null;
+  return data.success;
 };
 
 //Users

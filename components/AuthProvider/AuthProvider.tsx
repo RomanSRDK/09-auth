@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { checkSession, logout } from "@/lib/api/clientApi";
+import { checkSession, getMe } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 
 interface AuthProviderProps {
@@ -26,19 +26,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(true);
 
       try {
-        const user = await checkSession();
+        const isSessionActive = await checkSession();
 
-        if (user) {
-          setUser(user);
-        } else {
+        if (!isSessionActive) {
           clearIsAuthenticated();
+          return;
         }
+
+        const user = await getMe();
+
+        setUser(user);
       } catch {
         clearIsAuthenticated();
-
-        if (pathname.startsWith("/profile") || pathname.startsWith("/notes")) {
-          await logout();
-        }
       } finally {
         setIsLoading(false);
       }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllTags } from "@/lib/constants/noteTags";
+import { noteTags } from "@/lib/constants/noteTags";
 
 import css from "./SidebarNotes.module.css";
 
@@ -11,7 +11,7 @@ export default function SidebarNotes() {
           All notes
         </Link>
       </li>
-      {getAllTags.map((tag) => (
+      {noteTags.map((tag) => (
         <li key={tag} className={css.menuItem}>
           <Link href={`/notes/filter/${tag}`} className={css.menuLink}>
             {tag}

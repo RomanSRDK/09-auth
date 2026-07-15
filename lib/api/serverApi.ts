@@ -15,6 +15,10 @@ interface FetchNotesParams {
   tag?: string;
 }
 
+interface CheckSessionResponse {
+  success: boolean;
+}
+
 //Notes
 export const fetchNotes = async ({
   page,
@@ -48,14 +52,14 @@ export const fetchNoteById = async (id: Note["id"]): Promise<Note> => {
 };
 
 //Auth
-export const checkSession = async (): Promise<User | null> => {
-  const { data } = await api.get<User | null>("/auth/session", {
+export const checkSession = async (): Promise<boolean> => {
+  const { data } = await api.get<CheckSessionResponse>("/auth/session", {
     headers: {
       Cookie: await getCookieHeader(),
     },
   });
 
-  return data || null;
+  return data.success;
 };
 
 //Users

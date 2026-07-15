@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNoteDraftStore } from "@/lib/store/noteStore";
 import { createNote } from "@/lib/api/clientApi";
-import { getAllTags } from "@/lib/constants/noteTags";
+import { noteTags } from "@/lib/constants/noteTags";
 import toast from "react-hot-toast";
 import css from "./NoteForm.module.css";
 
@@ -68,12 +68,12 @@ export default function NoteForm() {
   return (
     <form action={handleSubmit} className={css.form}>
       <div className={css.formGroup}>
-        <label htmlFor={id}>Title</label>
+        <label htmlFor={`${id}-title`}>Title</label>
         <input
           type="text"
           name="title"
           className={css.input}
-          id={id}
+          id={`${id}-title`}
           defaultValue={draft?.title}
           onChange={handleChange}
           required
@@ -81,11 +81,11 @@ export default function NoteForm() {
       </div>
 
       <div className={css.formGroup}>
-        <label htmlFor={id}>Content</label>
+        <label htmlFor={`${id}-content`}>Content</label>
         <textarea
           name="content"
           className={css.textarea}
-          id={id}
+          id={`${id}-content`}
           defaultValue={draft?.content}
           onChange={handleChange}
           required
@@ -93,15 +93,15 @@ export default function NoteForm() {
       </div>
 
       <div className={css.formGroup}>
-        <label htmlFor={id}>Tag</label>
+        <label htmlFor={`${id}-tag`}>Tag</label>
         <select
           name="tag"
           className={css.select}
-          id={id}
+          id={`${id}-tag`}
           defaultValue={draft?.tag}
           onChange={handleChange}
         >
-          {getAllTags.map((tag) => (
+          {noteTags.map((tag) => (
             <option key={tag} value={tag}>
               {tag}
             </option>
